@@ -1,0 +1,33 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files (important later)
+.env
+appsettings.Development.json
+
+# Database files (SQLite if you use it)
+*.db
+*.sqlite
+
+# NuGet packages
+*.nupkg

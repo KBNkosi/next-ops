@@ -1,0 +1,6 @@
+@JobCommandCenter_HostAddress = http://localhost:5282
+
+GET {{JobCommandCenter_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
