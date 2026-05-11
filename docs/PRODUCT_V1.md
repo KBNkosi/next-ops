@@ -63,8 +63,8 @@ Represents a job opportunity.
 - CompanyName is required
 - RoleTitle is required
 - Status is required
-- If Status = Applied → DateApplied should exist
-- If FollowUpDate < today and Status = Applied → appears in overdue
+- If Status is Applied, DateApplied should be provided
+- If FollowUpDate is before today and Status is Applied, the application appears in the overdue list
 - Rejected/Closed applications are excluded from active tracking
 
 ---
@@ -105,8 +105,8 @@ Represents a person (recruiter, dev, hiring manager, etc.)
 #### Business Rules
 - Name is required
 - Platform is required
-- If NextFollowUpDate <= today → appears in Today View
-- DoNotContact is excluded from follow-ups
+- If NextFollowUpDate is today or earlier, the contact appears in the Today View
+- Contacts with DoNotContact status are excluded from follow-ups
 
 ---
 
@@ -147,10 +147,10 @@ Represents a task/action.
 - Title is required
 - DueDate is required
 - Can link to Application, Contact, both, or none
-- If Completed = true → CompletedAt must be set
+- If Completed is true, CompletedAt must be set
 - Completed follow-ups do not appear in Today View
-- Overdue = DueDate < today and not completed
-- DueToday = DueDate == today and not completed
+- A follow-up is Overdue when the DueDate is before today and it is not completed
+- A follow-up is DueToday when the DueDate is today and it is not completed
 
 ---
 
@@ -199,21 +199,21 @@ GET /api/dashboard/today
 ### Logic
 
 #### Due Today FollowUps
-- DueDate == today
-- Completed = false
+- DueDate is today
+- Completed is false
 
 #### Overdue FollowUps
-- DueDate < today
-- Completed = false
+- DueDate is before today
+- Completed is false
 
 #### Applications Needing FollowUp
-- Status = Applied or FollowUpNeeded
-- FollowUpDate <= today
+- Status is either Applied or FollowUpNeeded
+- FollowUpDate is today or earlier
 - Exclude Rejected, Offer, Closed
 
 #### Contacts Needing FollowUp
-- NextFollowUpDate <= today
-- RelationshipStatus != DoNotContact
+- NextFollowUpDate is today or earlier
+- RelationshipStatus is not DoNotContact
 
 #### Weekly Summary
 - ApplicationsCreatedThisWeek

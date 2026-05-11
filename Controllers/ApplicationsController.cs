@@ -20,37 +20,54 @@ namespace JobCommandCenter.Controllers
             },
         };
 
-        // 1. GET ALL: api/applications
+        // 1. CREATE: api/applications
+        [HttpPost]
+        public ActionResult<Application> Create(Application newApp)
+        {
+            newApp.Id = _applications.Any() ? _applications.Max(a => a.Id) + 1 : 1;
+
+            _applications.Add(newApp);
+
+            return CreatedAtAction(nameof(GetApplication), new { id = newApp.Id }, newApp);
+        }
+
+        // 2. GET ALL: api/applications
         [HttpGet]
         public ActionResult<List<Application>> GetAll()
         {
             return Ok(_applications);
         }
 
-        // 2. CREATE: api/applications
-        [HttpPost]
-        public ActionResult<Application> Create(Application newApp)
+        // 3. GET APPLICATION: api/applications/{id}
+        [HttpGet("{id}")]
+        public ActionResult<Application> GetApplication(int id)
         {
-            newApp.Id = _applications.Max(a => a.Id) + 1;
+             var app = _applications.FirstOrDefault(x => x.Id == id);
+             if(app == null) return NotFound();
 
-            _applications.Add(newApp);
-
-            return CreatedAtAction(nameof(GetAll), new { id = newApp.Id }, newApp);
+             return Ok(app);
         }
+    
 
-        // 3. UPDATE: api/applications
-        [HttpPatch("id")]
+        // 4. UPDATE: api/applications/{id}/status
+        [HttpPatch("{id}/status")]
         public ActionResult UpdateStatus(int id, [FromBody] string newStatus)
         {
             var app = _applications.FirstOrDefault(x => x.Id == id);
             if(app == null) return NotFound();
 
-            app.Status = Enum.Parse<ApplicationStatus>(newStatus);
+            if (!Enum.TryParse<ApplicationStatus>(newStatus, true, out var parsedStatus))
+            {
+                return BadRequest("Invalid status value");
+            }
+
+            app.Status = parsedStatus;
             return NoContent();
         }
 
-        // 4. DELETE: api/applications
-        [HttpDelete("id")]
+
+        // 5. DELETE: api/applications
+        [HttpDelete("{id}")]
         public ActionResult DeleteApp(int id)
         {
             var app = _applications.FirstOrDefault(x => x.Id == id);
