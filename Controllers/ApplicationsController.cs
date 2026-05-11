@@ -22,13 +22,23 @@ namespace JobCommandCenter.Controllers
 
         // 1. CREATE: api/applications
         [HttpPost]
-        public ActionResult<Application> Create(Application newApp)
+        public ActionResult<Application> Create(CreateApplicationRequest newApplication)
         {
-            newApp.Id = _applications.Any() ? _applications.Max(a => a.Id) + 1 : 1;
+            int ApplicationId = _applications.Any() ? _applications.Max(a => a.Id) + 1 : 1;
 
-            _applications.Add(newApp);
+            var application = new Application
+            {
+                Id = ApplicationId,
+                CompanyName = newApplication.CompanyName,
+                RoleTitle = newApplication.RoleTitle,
+                Source = newApplication.Source,
+                JobLink = newApplication.JobLink,
+                FollowUpDate = newApplication.FollowUpDate,
+                Notes = newApplication.Notes
 
-            return CreatedAtAction(nameof(GetApplication), new { id = newApp.Id }, newApp);
+            };
+
+            return CreatedAtAction(nameof(GetApplication), new { id = application.Id }, application);
         }
 
         // 2. GET ALL: api/applications

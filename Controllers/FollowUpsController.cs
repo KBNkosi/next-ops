@@ -25,7 +25,7 @@ namespace JobCommandCenter.Controllers
        [HttpPost]
        public ActionResult<FollowUp> CreateFollowUp(FollowUp newFollowUp)
         {
-            newFollowUp.Id = _followUps.Any() ? _followUps.Max(a => a.Id) + 1 : 1;
+            newFollowUp.Id = _followUps.Any() ? _followUps.Max(f => f.Id) + 1 : 1;
 
             _followUps.Add(newFollowUp);
 
