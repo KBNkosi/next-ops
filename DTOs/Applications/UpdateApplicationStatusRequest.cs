@@ -1,6 +1,9 @@
 using JobCommandCenter.Enums;
 
-public class UpdateApplicationStatusRequest
+namespace JobCommandCenter.DTOs.Applications
 {
-     public ApplicationStatus Status { get; set; } = ApplicationStatus.Saved;
+     public class UpdateApplicationStatusRequest
+     {
+          public ApplicationStatus Status { get; set; } = ApplicationStatus.Saved;
+     }
 }

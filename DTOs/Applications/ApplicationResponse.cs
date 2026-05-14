@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using JobCommandCenter.Enums;
 
-namespace JobCommandCenter.Models
+namespace JobCommandCenter.DTOs.Applications
 {
-    public class ApplicationResponse
+     public class ApplicationResponse
     {
         public int Id { get; set; }
 
@@ -19,11 +19,13 @@ namespace JobCommandCenter.Models
         [Required]
         public ApplicationStatus Status { get; set; } = ApplicationStatus.Saved;
 
-        public string JobLink { get; set; } = string.Empty;
         public DateTime? DateApplied { get; set; }
-        public DateTime? FollowUpDate { get; set; }
         public string Notes { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
+
 }
+
+
+   

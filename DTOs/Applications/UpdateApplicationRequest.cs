@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using JobCommandCenter.Enums;
 
-public class UpdateApplicationRequest
+
+namespace JobCommandCenter.DTOs.Applications
 {
-    [Required]
+    public class UpdateApplicationRequest
+    {
+        [Required]
         public string CompanyName { get; set; } = string.Empty;
 
         [Required]
@@ -13,8 +15,9 @@ public class UpdateApplicationRequest
         public string Source { get; set; } = string.Empty;
 
         public string JobLink { get; set; } = string.Empty;
-        
+
         public DateTime? FollowUpDate { get; set; }
         public string Notes { get; set; } = string.Empty;
 
+    }
 }

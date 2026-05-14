@@ -22,23 +22,43 @@ namespace JobCommandCenter.Controllers
 
         // 1. CREATE: api/applications
         [HttpPost]
-        public ActionResult<Application> Create(CreateApplicationRequest newApplication)
+        public ActionResult<ApplicationResponse> Create(CreateApplicationRequest newApplication)
         {
-            int ApplicationId = _applications.Any() ? _applications.Max(a => a.Id) + 1 : 1;
+            int applicationId = _applications.Any() ? _applications.Max(a => a.Id) + 1 : 1;
 
             var application = new Application
             {
-                Id = ApplicationId,
+                Id = applicationId,
                 CompanyName = newApplication.CompanyName,
                 RoleTitle = newApplication.RoleTitle,
                 Source = newApplication.Source,
+                Status = ApplicationStatus.Saved,
                 JobLink = newApplication.JobLink,
                 FollowUpDate = newApplication.FollowUpDate,
-                Notes = newApplication.Notes
+                Notes = newApplication.Notes,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
 
             };
 
-            return CreatedAtAction(nameof(GetApplication), new { id = application.Id }, application);
+            _applications.Add(application);
+
+            return CreatedAtAction(nameof(GetApplication), new { id = application.Id },
+            new ApplicationResponse
+            {
+                Id = application.Id,
+                CompanyName = application.CompanyName,
+                RoleTitle = application.RoleTitle,
+                Source = application.Source,
+                Status = application.Status,
+                JobLink = application.JobLink,
+                DateApplied = application.DateApplied,
+                FollowUpDate = application.FollowUpDate,
+                Notes = application.Notes,
+                CreatedAt = application.CreatedAt,
+                UpdatedAt = application.UpdatedAt
+            }
+            );
         }
 
         // 2. GET ALL: api/applications
@@ -52,19 +72,19 @@ namespace JobCommandCenter.Controllers
         [HttpGet("{id}")]
         public ActionResult<Application> GetApplication(int id)
         {
-             var app = _applications.FirstOrDefault(x => x.Id == id);
-             if(app == null) return NotFound();
+            var app = _applications.FirstOrDefault(x => x.Id == id);
+            if (app == null) return NotFound();
 
-             return Ok(app);
+            return Ok(app);
         }
-    
+
 
         // 4. UPDATE: api/applications/{id}/status
         [HttpPatch("{id}/status")]
         public ActionResult UpdateStatus(int id, [FromBody] string newStatus)
         {
             var app = _applications.FirstOrDefault(x => x.Id == id);
-            if(app == null) return NotFound();
+            if (app == null) return NotFound();
 
             if (!Enum.TryParse<ApplicationStatus>(newStatus, true, out var parsedStatus))
             {
@@ -81,10 +101,10 @@ namespace JobCommandCenter.Controllers
         public ActionResult DeleteApp(int id)
         {
             var app = _applications.FirstOrDefault(x => x.Id == id);
-            if(app == null) return NotFound();
+            if (app == null) return NotFound();
 
             _applications.Remove(app);
             return NoContent();
         }
     }
-} 
+}

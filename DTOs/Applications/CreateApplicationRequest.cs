@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using JobCommandCenter.Enums;
 
-public class CreateApplicationRequest
+namespace JobCommandCenter.DTOs.Applications
 {
-    [Required]
+    public class CreateApplicationRequest
+    {
+        [Required]
         public string CompanyName { get; set; } = string.Empty;
 
         [Required]
@@ -12,9 +14,11 @@ public class CreateApplicationRequest
         [Required]
         public string Source { get; set; } = string.Empty;
 
-        public string JobLink { get; set; } = string.Empty;
-        
-        public DateTime? FollowUpDate { get; set; }
+        [Required]
+        [EnumDataType(typeof(ApplicationStatus), ErrorMessage = "Status must be a valid ApplicationStatus value")]
+        public ApplicationStatus Status { get; set; } = ApplicationStatus.Saved;
+
         public string Notes { get; set; } = string.Empty;
 
+    }
 }

@@ -19,11 +19,11 @@ namespace JobCommandCenter.Models
         [Required]
         public ApplicationStatus Status { get; set; } = ApplicationStatus.Saved;
 
-        public string JobLink { get; set; } = string.Empty;
         public DateTime? DateApplied { get; set; }
-        public DateTime? FollowUpDate { get; set; }
         public string Notes { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        public List<FollowUp> FollowUps { get; set; } = new();
     }
 }
