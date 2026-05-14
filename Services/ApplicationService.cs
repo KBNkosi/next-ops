@@ -30,6 +30,17 @@ namespace JobCommandCenter.Services
                 UpdatedAt = application.UpdatedAt
             };
         }
+
+        // Helper function to get application by id
+        private Application GetApplication(int id)
+        {
+            var app = _applications.FirstOrDefault(a => a.Id == id);
+
+            if (app == null)
+                throw new KeyNotFoundException($"Application {id} not found");
+
+            return app;
+        }
         // Create application method 
         public ApplicationResponse Create(CreateApplicationRequest request)
         {
@@ -59,8 +70,8 @@ namespace JobCommandCenter.Services
             return MapToResponse(application);
 
         }
-        
-        // Method to create application follow up
+
+        //  Create application follow up
         private void CreateApplicationFollowUp(Application application)
         {
             var followUp = new FollowUp
@@ -75,5 +86,27 @@ namespace JobCommandCenter.Services
 
             _followUpService.Create(followUp);
         }
+
+        //  Get all applications
+        public List<ApplicationResponse> GetAll()
+        {
+            return _applications.Select(MapToResponse).ToList();
+        }
+
+        // Get a single application
+        public ApplicationResponse GetById(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(id));
+
+            var app = GetApplication(id);
+            return MapToResponse(app);
+
+        }
+
+        // public ApplicationResponse UpdateStatus(int id, string newStatus)
+        // {
+           
+        // }
     }
 }
