@@ -14,7 +14,9 @@ namespace JobCommandCenter.Models
         public string RoleTitle { get; set; } = string.Empty;
 
         [Required]
-        public string Source { get; set; } = string.Empty;
+        public string Platform { get; set; } = string.Empty;
+
+        public string JobLink { get; set; } =string.Empty;
 
         [Required]
         public ApplicationStatus Status { get; set; } = ApplicationStatus.Saved;

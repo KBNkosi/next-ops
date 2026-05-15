@@ -55,33 +55,64 @@ namespace JobCommandCenter.Controllers
 
         }
 
+        // 4. UPDATE: api/applications/{id}
+        [HttpPut("{id}")]
+        public ActionResult<ApplicationResponse> UpdateApplication(int id, UpdateApplicationRequest request)
+        {
+            
+             try
+            {
+                var response = _applicationService.UpdateApplication(id, request);
+                return Ok(response);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid application ID");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
 
-        // // 4. UPDATE: api/applications/{id}/status
-        // [HttpPatch("{id}/status")]
-        // public ActionResult UpdateStatus(int id, [FromBody] string newStatus)
-        // {
-        //     var app = _applications.FirstOrDefault(x => x.Id == id);
-        //     if (app == null) return NotFound();
 
-        //     if (!Enum.TryParse<ApplicationStatus>(newStatus, true, out var parsedStatus))
-        //     {
-        //         return BadRequest("Invalid status value");
-        //     }
+        // 5. UPDATE: api/applications/{id}/status
+        [HttpPatch("{id}/status")]
+        public ActionResult<ApplicationResponse> UpdateStatus(int id, [FromBody] UpdateApplicationStatusRequest newStatus)
+        {
+             try
+            {
+                var response = _applicationService.UpdateStatus(id, newStatus);
+                return Ok(response);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid application ID");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
 
-        //     app.Status = parsedStatus;
-        //     return NoContent();
-        // }
 
-
-        // // 5. DELETE: api/applications
-        // [HttpDelete("{id}")]
-        // public ActionResult DeleteApp(int id)
-        // {
-        //     var app = _applications.FirstOrDefault(x => x.Id == id);
-        //     if (app == null) return NotFound();
-
-        //     _applications.Remove(app);
-        //     return NoContent();
-        // }
+        // 6. DELETE: api/applications
+        [HttpDelete("{id}")]
+        public ActionResult DeleteApplication(int id)
+        {
+             try
+            {
+                _applicationService.DeleteApplication(id);
+                return NoContent();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid application ID");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
 }

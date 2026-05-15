@@ -22,7 +22,7 @@ namespace JobCommandCenter.Services
                 Id = application.Id,
                 CompanyName = application.CompanyName,
                 RoleTitle = application.RoleTitle,
-                Source = application.Source,
+                JobLink = application.JobLink,
                 Status = application.Status,
                 DateApplied = application.DateApplied,
                 Notes = application.Notes,
@@ -41,17 +41,24 @@ namespace JobCommandCenter.Services
 
             return app;
         }
+        // Helper function to check if ID is valid
+        private void ValidateId(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(id));
+        }
         // Create application method 
         public ApplicationResponse Create(CreateApplicationRequest request)
         {
             int applicationId = _applications.Any() ? _applications.Max(a => a.Id) + 1 : 1;
 
-            var application = new Application
+            var app = new Application
             {
                 Id = applicationId,
                 CompanyName = request.CompanyName,
                 RoleTitle = request.RoleTitle,
-                Source = request.Source,
+                Platform = request.Platform,
+                JobLink = request.JobLink,
                 Status = request.Status,
                 DateApplied = request.Status == ApplicationStatus.Saved ? null : DateTime.UtcNow,
                 Notes = request.Notes,
@@ -59,27 +66,27 @@ namespace JobCommandCenter.Services
                 UpdatedAt = DateTime.UtcNow
             };
 
-            _applications.Add(application);
+            _applications.Add(app);
 
             // Create follow-up if application has been applied
-            if (application.DateApplied != null)
+            if (app.DateApplied != null)
             {
-                CreateApplicationFollowUp(application);
+                CreateApplicationFollowUp(app.CompanyName, app.RoleTitle, app.Id, app.DateApplied.Value);
             }
 
-            return MapToResponse(application);
+            return MapToResponse(app);
 
         }
 
         //  Create application follow up
-        private void CreateApplicationFollowUp(Application application)
+        private void CreateApplicationFollowUp(string companyName, string roleTitle, int applicationId, DateTime dateApplied)
         {
             var followUp = new FollowUp
             {
-                Title = $"Follow up on {application.CompanyName} - {application.RoleTitle}",
-                DueDate = application.DateApplied.Value.AddDays(7),
+                Title = $"Follow up on {companyName} - {roleTitle}",
+                DueDate = dateApplied.AddDays(7),
                 FollowUpType = FollowUpType.ApplicationFollowUp,
-                ApplicationId = application.Id,
+                ApplicationId = applicationId,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -96,17 +103,64 @@ namespace JobCommandCenter.Services
         // Get a single application
         public ApplicationResponse GetById(int id)
         {
-            if (id <= 0)
-                throw new ArgumentOutOfRangeException(nameof(id));
-
+            ValidateId(id);
             var app = GetApplication(id);
             return MapToResponse(app);
 
         }
 
-        // public ApplicationResponse UpdateStatus(int id, string newStatus)
-        // {
-           
-        // }
+        // General Application Update
+        public ApplicationResponse UpdateApplication(int id, UpdateApplicationRequest request)
+        {
+            ValidateId(id);
+            var app = GetApplication(id);
+
+            if (!string.IsNullOrEmpty(request.CompanyName))
+                app.CompanyName = request.CompanyName;
+
+            if (!string.IsNullOrEmpty(request.RoleTitle))
+                app.RoleTitle = request.RoleTitle;
+
+            if (!string.IsNullOrEmpty(request.Platform))
+                app.Platform = request.Platform;
+
+            if (!string.IsNullOrEmpty(request.JobLink))
+                app.JobLink = request.JobLink;
+
+            if (!string.IsNullOrEmpty(request.Notes))
+                app.Notes = request.Notes;
+
+            app.UpdatedAt = DateTime.UtcNow;
+            return MapToResponse(app);
+        }
+
+        // Update application status
+        public ApplicationResponse UpdateStatus(int id, UpdateApplicationStatusRequest newStatus)
+        {
+            ValidateId(id);
+            var app = GetApplication(id);
+
+            app.Status = newStatus.Status;
+
+            if (app.Status == ApplicationStatus.Applied)
+            {
+                app.DateApplied = DateTime.UtcNow;
+                CreateApplicationFollowUp(app.CompanyName, app.RoleTitle, app.Id, app.DateApplied.Value);
+            }
+
+
+            app.UpdatedAt = DateTime.UtcNow;
+            return MapToResponse(app);
+
+        }
+
+        // Delete or Remove application
+        public void DeleteApplication(int id)
+        {
+            ValidateId(id);
+            var app = GetApplication(id);
+            _applications.Remove(app);
+
+        }
     }
 }

@@ -12,7 +12,9 @@ namespace JobCommandCenter.DTOs.Applications
         public string RoleTitle { get; set; } = string.Empty;
 
         [Required]
-        public string Source { get; set; } = string.Empty;
+        public string Platform { get; set; } = string.Empty;
+
+        public string JobLink { get; set; } = string.Empty;
 
         [Required]
         [EnumDataType(typeof(ApplicationStatus), ErrorMessage = "Status must be a valid ApplicationStatus value")]
