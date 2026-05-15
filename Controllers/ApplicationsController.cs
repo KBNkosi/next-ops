@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using JobCommandCenter.Models;
-using JobCommandCenter.Enums;
 using JobCommandCenter.Services;
 using JobCommandCenter.DTOs.Applications;
 
