@@ -13,7 +13,7 @@ namespace JobCommandCenter.Models
         [Required]
         public DateTime DueDate { get; set; }
 
-        public bool Completed { get; set; }
+        public bool Completed { get; set; } = false;
         public DateTime? CompletedAt { get; set; }
 
         [Required]

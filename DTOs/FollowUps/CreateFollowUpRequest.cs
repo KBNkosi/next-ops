@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using JobCommandCenter.Enums;
 
-namespace JobCommandCenter.Models
+namespace JobCommandCenter.DTOs.FollowUps
 {
     public class CreateFollowUpRequest
     {
@@ -19,4 +19,5 @@ namespace JobCommandCenter.Models
         public string Notes { get; set; } = string.Empty;
 
     }
+ 
 }

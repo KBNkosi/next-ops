@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using JobCommandCenter.Enums;
 
-namespace JobCommandCenter.Models
+namespace JobCommandCenter.DTOs.FollowUps       
 {
     public class FollowUpResponse
     {

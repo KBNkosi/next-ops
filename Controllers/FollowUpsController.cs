@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using JobCommandCenter.Models;
 using JobCommandCenter.Enums;
+using JobCommandCenter.Services;
 
 namespace JobCommandCenter.Controllers
 {
@@ -8,35 +9,28 @@ namespace JobCommandCenter.Controllers
     [Route("api/[controller]")]
     public class FollowUpsController : ControllerBase
     {
-        // Temporary in-memory storage
-       private static List<FollowUp> _followUps = new List<FollowUp>
-       {
-           new FollowUp
-           {
-               Id = 1,
-               Title = "Technical Recruiter",
-               DueDate = new DateTime(2026, 5, 12),
-               FollowUpType = FollowUpType.ApplicationFollowUp
+        private readonly FollowUpService _followUpService;
 
-           },
-       };
-
+        public FollowUpsController(FollowUpService followUpService)
+        {
+            _followUpService = followUpService;
+        }
+      
        // 1. CREATE: api/followups
        [HttpPost]
        public ActionResult<FollowUp> CreateFollowUp(FollowUp newFollowUp)
         {
-            newFollowUp.Id = _followUps.Any() ? _followUps.Max(f => f.Id) + 1 : 1;
+            var response = _followUpService.Create(newFollowUp);
 
-            _followUps.Add(newFollowUp);
-
-            return CreatedAtAction(nameof(GetFollowUp), new {id = newFollowUp.Id}, newFollowUp);
+            return CreatedAtAction(nameof(GetFollowUp), new {id = response.Id}, response);
         }
 
         // 2. GET ALL: api/followups
         [HttpGet]
         public ActionResult<List<FollowUp>> GetAll()
         {
-            return Ok(_followUps);
+             var response = _followUpService.GetAll();
+            return Ok(response);
         }
 
         // 3. GET ONE: api/followups/{id}

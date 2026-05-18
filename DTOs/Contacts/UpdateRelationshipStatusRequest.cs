@@ -1,6 +1,9 @@
 using JobCommandCenter.Enums;
 
-public class updateRelationshipStatusRequest
+namespace JobCommandCenter.DTOs.Contacts
+{
+public class UpdateRelationshipStatusRequest
 {
     public RelationshipStatus RelationshipStatus { get; set; } = RelationshipStatus.NotContacted;
+}
 }

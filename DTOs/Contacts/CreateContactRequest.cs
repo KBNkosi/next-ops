@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using JobCommandCenter.Enums;
 
+namespace JobCommandCenter.DTOs.Contacts
+{
 public class CreateContactRequest
 {
        [Required]
@@ -16,4 +18,5 @@ public class CreateContactRequest
      
         public DateTime? NextFollowUpDate { get; set; }
         public string Notes { get; set; } = string.Empty;
+    }
 }

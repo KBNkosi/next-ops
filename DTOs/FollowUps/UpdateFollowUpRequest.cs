@@ -1,22 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using JobCommandCenter.Enums;
 
-namespace JobCommandCenter.Models
+namespace JobCommandCenter.DTOs.FollowUps
 {
     public class UpdateFollowUpRequest
     {
-
-        [Required]
-        public string Title { get; set; } = string.Empty;
-
-        [Required]
-        public DateTime DueDate { get; set; }
-
-        [Required]
-        public FollowUpType FollowUpType { get; set; } = FollowUpType.GeneralTask;
+        public string? Title { get; set; } = string.Empty;
+        public DateTime? DueDate { get; set; }
+        public FollowUpType? FollowUpType { get; set; } = FollowUpType.GeneralTask;
         public int? ApplicationId { get; set; }
         public int? ContactId { get; set; }
-        public string Notes { get; set; } = string.Empty;
-
+        public string? Notes { get; set; } = string.Empty;
     }
 }
