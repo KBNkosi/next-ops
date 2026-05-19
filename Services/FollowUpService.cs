@@ -1,4 +1,5 @@
 using JobCommandCenter.Models;
+using JobCommandCenter.DTOs.FollowUps;
 
 namespace JobCommandCenter.Services
 {
@@ -16,9 +17,7 @@ namespace JobCommandCenter.Services
                 Completed = followUp.Completed,
                 CompletedAt = followUp.CompletedAt,
                 FollowUpType = followUp.FollowUpType,
-                Application = followUp.Application,
                 ApplicationId = followUp.ApplicationId,
-                Contact = followUp.Contact,
                 ContactId = followUp.ContactId,
                 Notes = followUp.Notes,
                 Outcome = followUp.Outcome,
@@ -35,6 +34,13 @@ namespace JobCommandCenter.Services
                throw new KeyNotFoundException($"follow up {id} not found");
             
             return followUp;
+        }
+
+        // Helper function to check if ID is valid
+         private void ValidateId(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException(nameof(id));
         }
 
         // Create a follow up
@@ -55,10 +61,64 @@ namespace JobCommandCenter.Services
         // Get a follow up
         public FollowUpResponse GetFollowUp(int id)
         {
-            
+            ValidateId(id);
+            var followUp = GetById(id);
+            return MapToResponse(followUp);
         }
 
+       // General update
+       public FollowUpResponse UpdateFollowUp(int id, UpdateFollowUpRequest request)
+       {
+          ValidateId(id);
+          var followUp = GetById(id);
 
+          if(!string.IsNullOrEmpty(request.Title))
+            followUp.Title = request.Title;
+
+          if(request.DueDate != null)
+            followUp.DueDate = request.DueDate.Value;
+
+          if(request.FollowUpType != null)
+            followUp.FollowUpType = request.FollowUpType.Value;
+
+          if(request.ApplicationId != null)
+            ValidateId(request.ApplicationId.Value);
+            followUp.ApplicationId = request.ApplicationId;
+
+          if(request.ContactId != null)
+            ValidateId(request.ContactId.Value);
+            followUp.ContactId = request.ContactId;
+
+          if(!string.IsNullOrEmpty(request.Notes))
+            followUp.Notes = request.Notes;
+
+          followUp.UpdatedAt = DateTime.UtcNow;
+
+          return MapToResponse(followUp);         
+                
+       }
+
+       // Update follow up complete status
+       public FollowUpResponse UpdateCompleteStatus(int id, bool status)
+       {
+          ValidateId(id);
+          var followUp = GetById(id);
+
+          followUp.Completed = status;
+          followUp.CompletedAt = DateTime.UtcNow;
+
+          return MapToResponse(followUp);
+
+       }
+
+        // Delete follow up
+       public void DeleteFollowUp(int id)
+       {
+          ValidateId(id);
+          var followUp = GetById(id);
+
+          _followUps.Remove(followUp);
+       }
 
         
     }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using JobCommandCenter.Models;
 using JobCommandCenter.Enums;
 using JobCommandCenter.Services;
+using JobCommandCenter.DTOs.FollowUps;
 
 namespace JobCommandCenter.Controllers
 {
@@ -27,7 +28,7 @@ namespace JobCommandCenter.Controllers
 
         // 2. GET ALL: api/followups
         [HttpGet]
-        public ActionResult<List<FollowUp>> GetAll()
+        public ActionResult<List<FollowUpResponse>> GetAll()
         {
              var response = _followUpService.GetAll();
             return Ok(response);
@@ -35,29 +36,86 @@ namespace JobCommandCenter.Controllers
 
         // 3. GET ONE: api/followups/{id}
         [HttpGet("{id}")]
-        public ActionResult<FollowUp> GetFollowUp(int id)
+        public ActionResult<FollowUpResponse> GetFollowUp(int id)
         {
-            var followUp = _followUps.FirstOrDefault(f => f.Id == id);
-            return followUp == null ? NotFound() : Ok(followUp);
+            try
+            {
+               var response = _followUpService.GetFollowUp(id);
+               return Ok(response);
+            }
+             
+            catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid follow up ID");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+           
         }
 
-        // 4. DELETE: api/followups/{id}
-        [HttpDelete("{id}")]
-        public ActionResult DeleteFollowUp(int id)
+        // 4. UPDATE: api/followups/{id}
+        [HttpPut("{id}")]
+        public ActionResult<FollowUpResponse> UpdateFollowUp(int id, UpdateFollowUpRequest request)
         {
-            var followUp = _followUps.FirstOrDefault(f => f.Id == id);
-            if(followUp == null)
+             try
+            {
+               var response = _followUpService.UpdateFollowUp(id, request);
+               return Ok(response);
+            }
+             
+            catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid follow up ID");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        // 5. UPDATE: api/followups/{id}/complete
+        [HttpPatch("{id}/complete")]
+        public ActionResult<FollowUpResponse> UpdateCompleteStatus(int id, [FromBody] bool request)
+        {
+            try
+            {
+                var response = _followUpService.UpdateCompleteStatus(id, request);
+                return Ok(response);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid follow up ID");
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
 
-            _followUps.Remove(followUp);
-            return NoContent();
         }
 
-        // 5. Patch: api/followups/{id}/complete
-        // [HttpPatch("{id}/complete")]
-        // public
+        // 6. DELETE: api/followups/{id}
+        [HttpDelete("{id}")]
+        public ActionResult DeleteFollowUp(int id)
+        {
+           try
+           {
+             _followUpService.DeleteFollowUp(id);
+             return NoContent();
+           }
+           catch (ArgumentOutOfRangeException)
+            {
+                return BadRequest("Invalid follow up ID");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+
+        }
+
+        
 
 
 

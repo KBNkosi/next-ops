@@ -7,9 +7,11 @@ namespace JobCommandCenter.DTOs.FollowUps
     {
         public string? Title { get; set; } = string.Empty;
         public DateTime? DueDate { get; set; }
-        public FollowUpType? FollowUpType { get; set; } = FollowUpType.GeneralTask;
+        public FollowUpType? FollowUpType { get; set; } = Enums.FollowUpType.GeneralTask;
         public int? ApplicationId { get; set; }
         public int? ContactId { get; set; }
+
+        public Outcome? Outcome = Enums.Outcome.None;
         public string? Notes { get; set; } = string.Empty;
     }
 }
